@@ -32,7 +32,6 @@ end
 
 local function walkTo(pos)
     Humanoid:MoveTo(pos)
-    Humanoid.MoveToFinished:wait()
 end
 
 local function autoJump()
@@ -63,7 +62,7 @@ local function collectDrops(position)
     local drops = game.Workspace.droppedItems:GetChildren()
     for i,v in pairs(drops) do
         if (v.Position - position).Magnitude < 30 then
-            HR.CFrame = v.Position
+            HR.CFrame = v.CFrame
             task.wait(0.3)
         end
     end
@@ -115,6 +114,7 @@ local function startFarmingOre(ore) -- Iron Ore, Gold Vein
         break
         end
     end
+    return
 end
 
 return {
