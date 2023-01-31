@@ -2,10 +2,11 @@ local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
 local Character = Player.Character
 local Humanoid = Character.Humanoid
-local jumpin
+local jumpin = nil
 local HR = Character.HumanoidRootPart
 local VirtualInputManager = game:GetService("VirtualInputManager")
 local healthBar = Player.PlayerGui.Main["status"].health.container.bar.stat.Text
+local autoJumpDebounce = false
 
 local minerals = game:GetService("Workspace").worldResources.mineable
 
@@ -35,10 +36,15 @@ local function walkTo(pos)
 end
 
 local function autoJump()
-    local check1 = workspace:FindPartOnRay(Ray.new(Humanoid.RootPart.Position-Vector3.new(0,1.5,0), Humanoid.RootPart.CFrame.lookVector*3), Humanoid.Parent)
-    local check2 = workspace:FindPartOnRay(Ray.new(Humanoid.RootPart.Position+Vector3.new(0,1.5,0), Humanoid.RootPart.CFrame.lookVector*3), Humanoid.Parent)
-    if (check1 or check2) and Player:GetAttribute("farmingOre") == true then
-        HR.CFrame = CFrame.new(HR.Position + Vector3.new(0,140,0))
+    if autoJumpDebounce == false then
+        autoJumpDebounce = true
+        local check1 = workspace:FindPartOnRay(Ray.new(Humanoid.RootPart.Position-Vector3.new(0,1.5,0), Humanoid.RootPart.CFrame.lookVector*3), Humanoid.Parent)
+        local check2 = workspace:FindPartOnRay(Ray.new(Humanoid.RootPart.Position+Vector3.new(0,1.5,0), Humanoid.RootPart.CFrame.lookVector*3), Humanoid.Parent)
+        if (check1 or check2) and Player:GetAttribute("farmingOre") == true then
+            HR.CFrame = CFrame.new(HR.Position + Vector3.new(0,140,0))
+        end
+        task.wait(0.7)
+        autoJumpDebounce = false
     end
 end
 
@@ -63,16 +69,27 @@ local function moveToOre(ore)
     jumpin = game:GetService('RunService').Stepped:Connect(autoJump)
 end
 
+local function stopFarmingOre()
+    setOreFarming(false)
+    autoJumpDebounce = false
+    if jumpin then
+        jumpin:Disconnect()
+    end
+end
+
+local function checkHealth()
+    local healthBar = Player.PlayerGui.Main["status"].health.container.bar.stat.Text
+    if healthBar:sub(0,1) == "0" then
+        stopFarmingOre()
+    end
+end
+
 local function startFarmingOre(ore) -- Iron Ore, Gold Vein
     setOreFarming(true)
     jumpin = game:GetService('RunService').Stepped:Connect(autoJump)
     while Player:GetAttribute("farmingOre") and wait() do
         
-        healthBar = Player.PlayerGui.Main["status"].health.container.bar.stat.Text
-        if healthBar:sub(0,1) == "0" then
-            setOreFarming(false)
-            return
-        end
+        checkHealth()
         
         local ores = getOre(ore)
         for i,v in pairs(ores) do
@@ -81,13 +98,6 @@ local function startFarmingOre(ore) -- Iron Ore, Gold Vein
             walkTo(v.PrimaryPart.Position)
         break
         end
-    end
-end
-
-local function stopFarmingOre() -- some reason this isnt working
-    setOreFarming(false)
-    if jumpin then
-        jumpin:Disconnect()
     end
 end
 
