@@ -36,14 +36,14 @@ end
 local function autoJump()
 	    local check1 = workspace:FindPartOnRay(Ray.new(Humanoid.RootPart.Position-Vector3.new(0,1.5,0), Humanoid.RootPart.CFrame.lookVector*3), Humanoid.Parent)
 	    local check2 = workspace:FindPartOnRay(Ray.new(Humanoid.RootPart.Position+Vector3.new(0,1.5,0), Humanoid.RootPart.CFrame.lookVector*3), Humanoid.Parent)
-	    if check1 or check2 then
+	    if (check1 or check2) and Player:GetAttribute("farmingOre") == false then
 	    	HR.CFrame = CFrame.new(HR.Position + Vector3.new(0,140,0))
 	    end
 end
 
 local function clickScreen()
     VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 1)
-    task.wait()
+    task.wait(0.2)
     VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 1)
 end
 
