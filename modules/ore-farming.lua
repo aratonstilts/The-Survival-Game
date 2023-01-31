@@ -5,6 +5,7 @@ local Humanoid = Character.Humanoid
 local jumpin
 local HR = Character.HumanoidRootPart
 local VirtualInputManager = game:GetService("VirtualInputManager")
+local healthBar = Player.PlayerGui.Main["status"].health.container.bar.stat.Text
 
 local minerals = game:GetService("Workspace").worldResources.mineable
 
@@ -34,11 +35,11 @@ local function walkTo(pos)
 end
 
 local function autoJump()
-	    local check1 = workspace:FindPartOnRay(Ray.new(Humanoid.RootPart.Position-Vector3.new(0,1.5,0), Humanoid.RootPart.CFrame.lookVector*3), Humanoid.Parent)
-	    local check2 = workspace:FindPartOnRay(Ray.new(Humanoid.RootPart.Position+Vector3.new(0,1.5,0), Humanoid.RootPart.CFrame.lookVector*3), Humanoid.Parent)
-	    if (check1 or check2) and Player:GetAttribute("farmingOre") == true then
-	    	HR.CFrame = CFrame.new(HR.Position + Vector3.new(0,140,0))
-	    end
+    local check1 = workspace:FindPartOnRay(Ray.new(Humanoid.RootPart.Position-Vector3.new(0,1.5,0), Humanoid.RootPart.CFrame.lookVector*3), Humanoid.Parent)
+    local check2 = workspace:FindPartOnRay(Ray.new(Humanoid.RootPart.Position+Vector3.new(0,1.5,0), Humanoid.RootPart.CFrame.lookVector*3), Humanoid.Parent)
+    if (check1 or check2) and Player:GetAttribute("farmingOre") == true then
+        HR.CFrame = CFrame.new(HR.Position + Vector3.new(0,140,0))
+    end
 end
 
 local function clickScreen()
@@ -54,7 +55,10 @@ local function moveToOre(ore)
         jumpin:Disconnect()
         HR.CFrame = CFrame.new(ore.PrimaryPart.Position)
         task.wait()
-        repeat clickScreen() HR.CFrame = CFrame.new(ore.PrimaryPart.Position) until ore.PrimaryPart.Transparency == 1 or Player:GetAttribute("farmingOre") == false
+        repeat
+            clickScreen() 
+            HR.CFrame = CFrame.new(ore.PrimaryPart.Position) 
+        until ore.PrimaryPart.Transparency == 1 or Player:GetAttribute("farmingOre") == false
     end
     jumpin = game:GetService('RunService').Stepped:Connect(autoJump)
 end
@@ -63,12 +67,18 @@ local function startFarmingOre(ore) -- Iron Ore, Gold Vein
     setOreFarming(true)
     jumpin = game:GetService('RunService').Stepped:Connect(autoJump)
     while Player:GetAttribute("farmingOre") and wait() do
+        
+        healthBar = Player.PlayerGui.Main["status"].health.container.bar.stat.Text
+        if healthBar:sub(0,1) == "0" then
+            setOreFarming(false)
+            return
+        end
+        
         local ores = getOre(ore)
         for i,v in pairs(ores) do
             moveToOre(v)
             
             walkTo(v.PrimaryPart.Position)
-        
         break
         end
     end
