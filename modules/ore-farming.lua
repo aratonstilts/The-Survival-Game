@@ -59,6 +59,16 @@ local function clickScreen()
     VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 1)
 end
 
+local function collectDrops(position)
+    local drops = game.Workspace.droppedItems:GetChildren()
+    for i,v in pairs(drops) do
+        if (v.Position - position).Magnitude < 30 then
+            HR.CFrame = v.Position
+            task.wait(0.3)
+        end
+    end
+end
+
 local function moveToOre(ore)
     local X,Y,Z = HR.Position.X, HR.Position.Y, HR.Position.Z
     local X2,Y2,Z2 = ore.PrimaryPart.Position.X, ore.PrimaryPart.Position.Y, ore.PrimaryPart.Position.Z
@@ -71,6 +81,9 @@ local function moveToOre(ore)
             HR.CFrame = CFrame.new(ore.PrimaryPart.Position) 
         until ore.PrimaryPart.Transparency == 1 or Player:GetAttribute("farmingOre") == false
     end
+    
+    collectDrops(ore.PrimaryPart.Position)
+    
     task.spawn(autoJump)
 end
 
