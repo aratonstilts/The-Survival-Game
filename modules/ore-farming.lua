@@ -4,9 +4,9 @@ local Character = Player.Character
 local Humanoid = Character.Humanoid
 local HR = Character.HumanoidRootPart
 local VirtualInputManager = game:GetService("VirtualInputManager")
-local healthBar = Player.PlayerGui.Main["status"].health.container.bar.stat.Text
 local autoJumpDebounce = false
 local autoJumping = false
+local checkHealth
 
 local minerals = game:GetService("Workspace").worldResources.mineable
 
@@ -52,7 +52,33 @@ local function autoJump()
     return
 end
 
+local function findTool(tool)
+    local toolToEquip
+    
+    for i,v in pairs(Player.Backpack:GetChildren()) do
+        if v:FindFirstChild("toolModel") and v.toolModel:FindFirstChildWhichIsA("MeshPart").Name:find(tool) then
+            toolToEquip = v
+        end
+    end
+    
+    return toolToEquip
+end
+
+local function equipTool(tool)
+    local mesh = Character:FindFirstChildWhichIsA("Tool")
+    if mesh and mesh:FindFirstChild("toolModel") and mesh.toolModel:FindFirstChildWhichIsA("MeshPart") and mesh.toolModel:FindFirstChildWhichIsA("MeshPart").Name:find(tool) then
+        return
+    else
+        if mesh then
+            mesh.Parent = Player.Backpack
+        end
+        local toolToEquip = findTool(tool)
+        toolToEquip.Parent = Character
+    end
+end
+
 local function clickScreen()
+    equipTool()
     VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 1)
     task.wait(0.2)
     VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 1)
@@ -63,7 +89,7 @@ local function collectDrops(position)
     for i,v in pairs(drops) do
         if (v.Position - position).Magnitude < 30 then
             HR.CFrame = v.CFrame
-            task.wait(0.3)
+            task.wait(0.1)
         end
     end
 end
@@ -92,13 +118,6 @@ local function stopFarmingOre()
     autoJumping = false
 end
 
-local function checkHealth()
-    local healthBar = Player.PlayerGui.Main["status"].health.container.bar.stat.Text
-    if healthBar:sub(0,1) == "0" then
-        stopFarmingOre()
-    end
-end
-
 local function startFarmingOre(ore) -- Iron Ore, Gold Vein
     setOreFarming(true)
     task.spawn(autoJump)
@@ -115,6 +134,15 @@ local function startFarmingOre(ore) -- Iron Ore, Gold Vein
         end
     end
     return
+end
+
+function checkHealth()
+    local healthBar = Player.PlayerGui.Main["status"].health.container.bar.stat.Text
+    if healthBar:sub(0,1) == "0" then
+        stopFarmingOre()
+        repeat wait() until game.Players.LocalPlayer.Character
+        startFarmingOre()
+    end
 end
 
 return {
