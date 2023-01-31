@@ -1,0 +1,232 @@
+print("Loading")
+
+repeat wait()
+until game.Players.LocalPlayer and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:findFirstChild("Head") and game.Players.LocalPlayer.Character:findFirstChild("Humanoid") 
+local mouse = game.Players.LocalPlayer:GetMouse()
+repeat wait() until mouse
+
+function loadModule(url)
+	return loadstring(game:HttpGet(url))()
+end
+
+local oreModule = loadModule("https://raw.githubusercontent.com/aratonstilts/The-Survival-Game/main/modules/ore-farming.lua")
+
+print("Finished loading")
+
+local Character = game.Players.LocalPlayer.Character
+
+local noClip = false
+
+local function NoclipLoop() -- lets you walk through stuff
+    if noClip == true then
+        for _, child in pairs(Character:GetDescendants()) do
+            if child:IsA("BasePart") and child.CanCollide == true and child.Name ~= floatName then
+                child.CanCollide = false
+            end
+    	end
+    end
+end
+
+local GUI = Instance.new("ScreenGui")
+local Background = Instance.new("Frame")
+local Scroll = Instance.new("ScrollingFrame")
+local Close = Instance.new("TextButton")
+local Minimum = Instance.new("TextButton")
+local draggableName = Instance.new("TextButton")
+
+
+
+local function createOreBackground()
+    local oldBackground = game.CoreGui["Survival GUI"].Background:FindFirstChild("Ore Background")
+    if oldBackground then
+        oldBackground:Destroy()
+        oreModule.stopFarmingOre()
+        return
+    end
+    
+    local oreBackground = Instance.new("Frame")
+    local Scroll2 = Instance.new("ScrollingFrame")
+    
+    oreBackground.Name = "Ore Background"
+    oreBackground.Parent = Background
+    oreBackground.BackgroundColor3 = Color3.fromRGB(0,0,0)
+    oreBackground.BorderSizePixel = 0
+    oreBackground.BackgroundTransparency = 0.5
+    oreBackground.Position = UDim2.new(1, 0, 0, 0)
+    oreBackground.AnchorPoint = Vector2.new(0,0)
+    oreBackground.Size = UDim2.new(0, 200, 0, 275)
+    oreBackground.Active = true
+
+    Scroll2.Name = "Scroll Menu"
+    Scroll2.Parent = oreBackground
+    Scroll2.Active = true
+    Scroll2.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Scroll2.BackgroundTransparency = 1
+    Scroll2.BorderSizePixel = 0
+    Scroll2.AutomaticCanvasSize = "Y"
+    Scroll2.Position = UDim2.new(0, 0, 0, 25)
+    Scroll2.Size = UDim2.new(1,0,1,-25)
+    Scroll2.ScrollBarThickness = 4
+
+    local Grid2 = Instance.new("UIGridLayout")
+    Grid2.CellSize = UDim2.new(1,0,0,25)
+    Grid2.CellPadding = UDim2.new(0,1,0,5)
+    Grid2.SortOrder = "LayoutOrder"
+    Grid2.Parent = Scroll2
+    
+    local goldOreButton = Instance.new("TextButton")
+    goldOreButton.Name = "No Clip"
+    goldOreButton.Position = UDim2.new(0,1,0,341)
+    goldOreButton.Size = UDim2.new(0,100,0,20)
+    goldOreButton.BackgroundColor3 = Color3.fromRGB(0,0,50)
+    goldOreButton.BackgroundTransparency = 0.5
+    goldOreButton.BorderColor3 = Color3.new(1,1,1)
+    goldOreButton.ZIndex = 2
+    goldOreButton.Text = "Gold Vein"
+    goldOreButton.TextColor3 = Color3.fromRGB(250,250,250)
+    goldOreButton.TextScaled = true
+    goldOreButton.LayoutOrder = 10
+    goldOreButton.Parent = Scroll2
+    goldOreButton.MouseButton1Click:Connect(function()
+        if goldOreButton.Text == "Gold Vein" then
+            goldOreButton.Text = "Mining Gold"
+            goldOreButton.BackgroundColor3 = Color3.fromRGB(100,0,0)
+            oreModule.startFarmingOre("Gold Vein")
+        else
+            goldOreButton.Text = "Gold Vein"
+            goldOreButton.BackgroundColor3 = Color3.fromRGB(0,0,50)
+            oreModule.stopFarmingOre()
+        end
+    end)
+end
+
+local function createGUI()
+    if game:GetService("CoreGui"):FindFirstChild("Survival GUI") then
+        game.CoreGui["Survival GUI"]:Destroy()
+    end
+
+    GUI.Name = "Survival GUI"
+    GUI.Parent = game:GetService("CoreGui")
+
+
+    Background.Name = "Background"
+    Background.Parent = GUI
+    Background.BackgroundColor3 = Color3.fromRGB(0,0,0)
+    Background.BorderSizePixel = 0
+    Background.BackgroundTransparency = 0.5
+    Background.Position = UDim2.new(0.06, 0, 0.50, 0)
+    Background.AnchorPoint = Vector2.new(0,0.5)
+    Background.Size = UDim2.new(0, 200, 0, 275)
+    Background.Active = true
+    
+    draggableName.Name = "CmdName"
+    draggableName.AutoButtonColor = false
+    draggableName.Parent = Background
+    draggableName.BackgroundColor3 = Color3.fromRGB(0,0,150)
+    draggableName.BorderSizePixel = 0
+    draggableName.Size = UDim2.new(1, 0, 0, 20)
+    draggableName.Font = Enum.Font.GothamBlack
+    draggableName.Text = "Survival GUI"
+    draggableName.TextColor3 = Color3.fromRGB(255, 255, 255)
+    draggableName.TextScaled = true
+    draggableName.TextSize = 14.000
+    draggableName.TextWrapped = true
+    Dragg = false
+    draggableName.MouseButton1Down:Connect(function()Dragg = true while Dragg do game.TweenService:Create(Background, TweenInfo.new(.06), {Position = UDim2.new(0,mouse.X-100,0,mouse.Y+ (275/2) - 5)}):Play()wait()end end)
+    draggableName.MouseButton1Up:Connect(function()Dragg = false end)
+    
+    Close.Name = "Close"
+    Close.Parent = Background
+    Close.BackgroundColor3 = Color3.fromRGB(155, 0, 0)
+    Close.BorderSizePixel = 0
+    Close.Position = UDim2.new(1, 0, 0, 0)
+    Close.AnchorPoint = Vector2.new(1,0)
+    Close.Size = UDim2.new(0, 20, 0, 20)
+    Close.Font = Enum.Font.SourceSans
+    Close.Text = "X"
+    Close.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Close.TextSize = 14.000
+    Close.MouseButton1Click:Connect(function()
+    GUI:Destroy()
+    end)
+    
+    Minimum.Name = "Minimum"
+    Minimum.Parent = Background
+    Minimum.BackgroundColor3 = Color3.fromRGB(0, 155, 155)
+    Minimum.BorderSizePixel = 0
+    Minimum.Position = UDim2.new(1, -20, 0, 0)
+    Minimum.AnchorPoint = Vector2.new(1,0)
+    Minimum.Size = UDim2.new(0, 20, 0, 20)
+    Minimum.Font = Enum.Font.SourceSans
+    Minimum.Text = "-"
+    Minimum.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Minimum.TextSize = 14.000
+    Minimum.MouseButton1Click:Connect(function()
+    	if Background.BackgroundTransparency == 0.5 then
+    		Background.BackgroundTransparency = 1
+    	elseif Background.BackgroundTransparency == 1 then
+    		Background.BackgroundTransparency = 0.5
+    	end
+    end)
+    
+    Scroll.Name = "Scroll Menu"
+    Scroll.Parent = Background
+    Scroll.Active = true
+    Scroll.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Scroll.BackgroundTransparency = 1
+    Scroll.BorderSizePixel = 0
+    Scroll.AutomaticCanvasSize = "Y"
+    Scroll.Position = UDim2.new(0, 0, 0, 25)
+    Scroll.Size = UDim2.new(1,0,1,-25)
+    Scroll.ScrollBarThickness = 4
+    
+    local Grid = Instance.new("UIGridLayout")
+    Grid.CellSize = UDim2.new(1,0,0,25)
+    Grid.CellPadding = UDim2.new(0,1,0,5)
+    Grid.SortOrder = "LayoutOrder"
+    Grid.Parent = Scroll
+    
+    local oreSelection = Instance.new("TextButton")
+    oreSelection.Name = "Auto-farm Ore"
+    oreSelection.Position = UDim2.new(0,1,0,341)
+    oreSelection.Size = UDim2.new(0,100,0,20)
+    oreSelection.BackgroundColor3 = Color3.fromRGB(0,0,50)
+    oreSelection.BackgroundTransparency = 0.5
+    oreSelection.BorderColor3 = Color3.new(1,1,1)
+    oreSelection.ZIndex = 2
+    oreSelection.Text = "Auto-farm Ore >"
+    oreSelection.TextColor3 = Color3.fromRGB(250,250,250)
+    oreSelection.TextScaled = true
+    oreSelection.LayoutOrder = 10
+    oreSelection.Parent = Scroll
+    oreSelection.MouseButton1Click:Connect(createOreBackground)
+    
+    local noClipButton = Instance.new("TextButton")
+    noClipButton.Name = "No Clip"
+    noClipButton.Position = UDim2.new(0,1,0,341)
+    noClipButton.Size = UDim2.new(0,100,0,20)
+    noClipButton.BackgroundColor3 = Color3.fromRGB(0,0,50)
+    noClipButton.BackgroundTransparency = 0.5
+    noClipButton.BorderColor3 = Color3.new(1,1,1)
+    noClipButton.ZIndex = 2
+    noClipButton.Text = "No Clip"
+    noClipButton.TextColor3 = Color3.fromRGB(250,250,250)
+    noClipButton.TextScaled = true
+    noClipButton.LayoutOrder = 10
+    noClipButton.Parent = Scroll
+    noClipButton.MouseButton1Click:Connect(function()
+        if noClipButton.Text == "No Clip" then
+            noClipButton.Text = "No Clipping"
+            noClipButton.BackgroundColor3 = Color3.fromRGB(0,0,250)
+            NoClipping = game:GetService('RunService').Stepped:Connect(NoclipLoop) 
+            noClip = true
+        else
+            noClipButton.Text = "No Clip"
+            noClipButton.BackgroundColor3 = Color3.fromRGB(0,0,50)
+            NoClipping:Disconnect()
+            noClip = false
+        end
+    end)
+end
+
+createGUI()
