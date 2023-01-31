@@ -2,11 +2,11 @@ local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
 local Character = Player.Character
 local Humanoid = Character.Humanoid
-local jumpin = nil
 local HR = Character.HumanoidRootPart
 local VirtualInputManager = game:GetService("VirtualInputManager")
 local healthBar = Player.PlayerGui.Main["status"].health.container.bar.stat.Text
 local autoJumpDebounce = false
+local autoJumping = false
 
 local minerals = game:GetService("Workspace").worldResources.mineable
 
@@ -36,16 +36,21 @@ local function walkTo(pos)
 end
 
 local function autoJump()
-    if autoJumpDebounce == false then
-        autoJumpDebounce = true
-        local check1 = workspace:FindPartOnRay(Ray.new(Humanoid.RootPart.Position-Vector3.new(0,1.5,0), Humanoid.RootPart.CFrame.lookVector*3), Humanoid.Parent)
-        local check2 = workspace:FindPartOnRay(Ray.new(Humanoid.RootPart.Position+Vector3.new(0,1.5,0), Humanoid.RootPart.CFrame.lookVector*3), Humanoid.Parent)
-        if (check1 or check2) and Player:GetAttribute("farmingOre") == true then
-            HR.CFrame = CFrame.new(HR.Position + Vector3.new(0,140,0))
+    autoJumping = true
+    while autoJumping do
+        if autoJumpDebounce == false then
+            autoJumpDebounce = true
+            local check1 = workspace:FindPartOnRay(Ray.new(Humanoid.RootPart.Position-Vector3.new(0,1.5,0), Humanoid.RootPart.CFrame.lookVector*3), Humanoid.Parent)
+            local check2 = workspace:FindPartOnRay(Ray.new(Humanoid.RootPart.Position+Vector3.new(0,1.5,0), Humanoid.RootPart.CFrame.lookVector*3), Humanoid.Parent)
+            if (check1 or check2) and Player:GetAttribute("farmingOre") == true then
+                HR.CFrame = CFrame.new(HR.Position + Vector3.new(0,140,0))
+            end
+            task.wait(0.7)
+            autoJumpDebounce = false
         end
-        task.wait(0.7)
-        autoJumpDebounce = false
+        task.wait()
     end
+    return
 end
 
 local function clickScreen()
@@ -58,7 +63,7 @@ local function moveToOre(ore)
     local X,Y,Z = HR.Position.X, HR.Position.Y, HR.Position.Z
     local X2,Y2,Z2 = ore.PrimaryPart.Position.X, ore.PrimaryPart.Position.Y, ore.PrimaryPart.Position.Z
     if X2 >= X-7 and X2 <= X+7 and Z2 >= Z-7 and Z2 <= Z+7 then
-        jumpin:Disconnect()
+        autoJumping = false
         HR.CFrame = CFrame.new(ore.PrimaryPart.Position)
         task.wait()
         repeat
@@ -66,15 +71,13 @@ local function moveToOre(ore)
             HR.CFrame = CFrame.new(ore.PrimaryPart.Position) 
         until ore.PrimaryPart.Transparency == 1 or Player:GetAttribute("farmingOre") == false
     end
-    jumpin = game:GetService('RunService').Stepped:Connect(autoJump)
+    task.spawn(autoJump)
 end
 
 local function stopFarmingOre()
     setOreFarming(false)
     autoJumpDebounce = false
-    if jumpin then
-        jumpin:Disconnect()
-    end
+    autoJumping = false
 end
 
 local function checkHealth()
@@ -86,7 +89,7 @@ end
 
 local function startFarmingOre(ore) -- Iron Ore, Gold Vein
     setOreFarming(true)
-    jumpin = game:GetService('RunService').Stepped:Connect(autoJump)
+    task.spawn(autoJump)
     while Player:GetAttribute("farmingOre") and wait() do
         
         checkHealth()
