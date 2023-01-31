@@ -56,7 +56,7 @@ local function findTool(tool)
     local toolToEquip
     
     for i,v in pairs(Player.Backpack:GetChildren()) do
-        if v:FindFirstChild("toolModel") and v.toolModel:FindFirstChildWhichIsA("MeshPart").Name:find(tool) then
+        if v:FindFirstChild("toolModel") and v.toolModel:FindFirstChildWhichIsA("MeshPart") and v.toolModel:FindFirstChildWhichIsA("MeshPart").Name:find(tool) then
             toolToEquip = v
         end
     end
