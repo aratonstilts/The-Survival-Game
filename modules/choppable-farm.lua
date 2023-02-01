@@ -37,7 +37,7 @@ local function getTree(treeName)
             end
         end
         for i,v in pairs(animals:GetChildren()) do
-            if v:IsA("Model") and v.PrimaryPart.Transparency == 0 then
+            if v:IsA("Model") then
                 table.insert(trees, v)
             end
         end
