@@ -160,6 +160,7 @@ local function startFarmingChoppable(tree)
 end
 
 local function clickSpawnButton()
+    local spawnButton = Player.PlayerGui.Avatar.spawnButtons.spawn
     repeat wait() until spawnButton.Parent.Visible == true
     task.wait(1)
     firesignal(spawnButton.Activated)
@@ -175,7 +176,6 @@ end
 
 function checkHealth(tree)
     local healthBar = Player.PlayerGui.Main["status"].health.container.bar.stat.Text
-    local spawnButton = Player.PlayerGui.Avatar.spawnButtons.spawn
     
     if healthBar:sub(0,1) == "0" then
         stopFarmingChoppable()
