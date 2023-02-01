@@ -125,7 +125,7 @@ local function moveToTree(tree)
         task.wait()
         repeat
             clickScreen() 
-            HR.CFrame = CFrame.new(tree.PrimaryPart.Position - Vector3.new(0,0,5)) 
+            HR.CFrame = CFrame.new(tree.PrimaryPart.Position + Vector3.new(0,0,10)) 
         until tree.PrimaryPart.Transparency == 1 or Player:GetAttribute("farmingChoppable") == false
     end
     
