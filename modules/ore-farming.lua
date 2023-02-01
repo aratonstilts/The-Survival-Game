@@ -144,6 +144,7 @@ function checkHealth(ore)
         stopFarmingOre()
         
         repeat wait() until spawnButton.Parent.Visible == true
+        task.wait(1)
         firesignal(spawnButton.MouseButton1Click)
         
         repeat wait() until game.Players.LocalPlayer.Character
