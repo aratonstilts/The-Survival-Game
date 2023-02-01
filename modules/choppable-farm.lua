@@ -167,8 +167,8 @@ local function clickSpawnButton()
 end
 
 local function hideGUIS()
-    for i,v in pairs(Player.PlayerGui.Avater:GetChildren()) do
-        if v:IsA("Frame") and v.Visible == true then
+    for i,v in pairs(Player.PlayerGui.Avatar:GetChildren()) do
+        if (v:IsA("Frame") or v:IsA("ImageLabel")) and v.Visible == true then
             v.Visible = false
         end
     end
