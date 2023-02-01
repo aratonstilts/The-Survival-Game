@@ -10,8 +10,14 @@ function loadModule(url)
 end
 
 local oreModule = loadModule("https://raw.githubusercontent.com/aratonstilts/The-Survival-Game/main/modules/ore-farming.lua")
+local treeModule = loadModule("https://raw.githubusercontent.com/aratonstilts/The-Survival-Game/main/modules/ore-farming.lua")
 
 print("Finished loading")
+
+local function stopAllModules()
+    oreModule.stopFarmingOre()
+    treeModule.stopFarmingChoppable()
+end
 
 local Character = game.Players.LocalPlayer.Character
 
@@ -37,11 +43,12 @@ local draggableName = Instance.new("TextButton")
 
 
 local function createOreBackground()
-    local oldBackground = game.CoreGui["Survival GUI"].Background:FindFirstChild("Ore Background")
-    if oldBackground then
-        oldBackground:Destroy()
-        oreModule.stopFarmingOre()
-        return
+    local oldBackground = game.CoreGui["Survival GUI"].Background:GetChildren()
+    for i,v in pairs(oldBackground) do
+        if v:IsA("Frame") then
+            v:Destroy()
+            return
+        end
     end
     
     local oreBackground = Instance.new("Frame")
@@ -74,30 +81,103 @@ local function createOreBackground()
     Grid2.SortOrder = "LayoutOrder"
     Grid2.Parent = Scroll2
     
-    local goldOreButton = Instance.new("TextButton")
-    goldOreButton.Name = "No Clip"
-    goldOreButton.Position = UDim2.new(0,1,0,341)
-    goldOreButton.Size = UDim2.new(0,100,0,20)
-    goldOreButton.BackgroundColor3 = Color3.fromRGB(0,0,50)
-    goldOreButton.BackgroundTransparency = 0.5
-    goldOreButton.BorderColor3 = Color3.new(1,1,1)
-    goldOreButton.ZIndex = 2
-    goldOreButton.Text = "Gold Vein"
-    goldOreButton.TextColor3 = Color3.fromRGB(250,250,250)
-    goldOreButton.TextScaled = true
-    goldOreButton.LayoutOrder = 10
-    goldOreButton.Parent = Scroll2
-    goldOreButton.MouseButton1Click:Connect(function()
-        if goldOreButton.Text == "Gold Vein" then
-            goldOreButton.Text = "Mining Gold"
-            goldOreButton.BackgroundColor3 = Color3.fromRGB(100,0,0)
-            oreModule.startFarmingOre("Gold Vein")
-        else
-            goldOreButton.Text = "Gold Vein"
-            goldOreButton.BackgroundColor3 = Color3.fromRGB(0,0,50)
-            oreModule.stopFarmingOre()
+    local oreList = {"Iron Ore", "Copper Ore", "Coal Ore", "Stone", "Boulder", "Bluesteel", "Gold Vein"}
+    for i,v in pairs(oreList) do
+        local goldOreButton = Instance.new("TextButton")
+        goldOreButton.Name = v
+        goldOreButton.Position = UDim2.new(0,1,0,341)
+        goldOreButton.Size = UDim2.new(0,100,0,20)
+        goldOreButton.BackgroundColor3 = Color3.fromRGB(0,0,50)
+        goldOreButton.BackgroundTransparency = 0.5
+        goldOreButton.BorderColor3 = Color3.new(1,1,1)
+        goldOreButton.ZIndex = 2
+        goldOreButton.Text = v
+        goldOreButton.TextColor3 = Color3.fromRGB(250,250,250)
+        goldOreButton.TextScaled = true
+        goldOreButton.LayoutOrder = 10
+        goldOreButton.Parent = Scroll2
+        goldOreButton.MouseButton1Click:Connect(function()
+            if goldOreButton.Text == v then
+                goldOreButton.Text = "Mining "..v
+                goldOreButton.BackgroundColor3 = Color3.fromRGB(100,0,0)
+                stopAllModules()
+                oreModule.startFarmingOre(v)
+            else
+                goldOreButton.Text = v
+                goldOreButton.BackgroundColor3 = Color3.fromRGB(0,0,50)
+                oreModule.stopFarmingOre()
+            end
+        end)
+    end
+end
+
+local function createTreeBackground()
+    local oldBackground = game.CoreGui["Survival GUI"].Background:GetChildren()
+    for i,v in pairs(oldBackground) do
+        if v:IsA("Frame") then
+            v:Destroy()
+            return
         end
-    end)
+    end
+    
+    local treeBackground = Instance.new("Frame")
+    local Scroll2 = Instance.new("ScrollingFrame")
+    
+    treeBackground.Name = "tree Background"
+    treeBackground.Parent = Background
+    treeBackground.BackgroundColor3 = Color3.fromRGB(0,0,0)
+    treeBackground.BorderSizePixel = 0
+    treeBackground.BackgroundTransparency = 0.5
+    treeBackground.Position = UDim2.new(1, 0, 0, 0)
+    treeBackground.AnchorPoint = Vector2.new(0,0)
+    treeBackground.Size = UDim2.new(0, 200, 0, 275)
+    treeBackground.Active = true
+
+    Scroll2.Name = "Scroll Menu"
+    Scroll2.Parent = treeBackground
+    Scroll2.Active = true
+    Scroll2.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Scroll2.BackgroundTransparency = 1
+    Scroll2.BorderSizePixel = 0
+    Scroll2.AutomaticCanvasSize = "Y"
+    Scroll2.Position = UDim2.new(0, 0, 0, 25)
+    Scroll2.Size = UDim2.new(1,0,1,-25)
+    Scroll2.ScrollBarThickness = 4
+
+    local Grid2 = Instance.new("UIGridLayout")
+    Grid2.CellSize = UDim2.new(1,0,0,25)
+    Grid2.CellPadding = UDim2.new(0,1,0,5)
+    Grid2.SortOrder = "LayoutOrder"
+    Grid2.Parent = Scroll2
+    
+    local chopList = {"Big Oak Tree", "Pine Tree", "Oak Tree", "Big Pine Tree", "Berry Bush", "Bush", "Mushroom", "Carrot", "Wheat", "Palm Tree", "Big Palm Tree", "Jungle Tree", "Big Jungle Tree", "Jungle Vine"}
+    for i,v in pairs(chopList) do
+        local chopButton = Instance.new("TextButton")
+        chopButton.Name = v
+        chopButton.Position = UDim2.new(0,1,0,341)
+        chopButton.Size = UDim2.new(0,100,0,20)
+        chopButton.BackgroundColor3 = Color3.fromRGB(0,0,50)
+        chopButton.BackgroundTransparency = 0.5
+        chopButton.BorderColor3 = Color3.new(1,1,1)
+        chopButton.ZIndex = 2
+        chopButton.Text = v
+        chopButton.TextColor3 = Color3.fromRGB(250,250,250)
+        chopButton.TextScaled = true
+        chopButton.LayoutOrder = 10
+        chopButton.Parent = Scroll2
+        chopButton.MouseButton1Click:Connect(function()
+            if chopButton.Text == v then
+                chopButton.Text = "Chopping "..v
+                chopButton.BackgroundColor3 = Color3.fromRGB(100,0,0)
+                stopAllModules()
+                oreModule.startFarmingOre(v)
+            else
+                chopButton.Text = v
+                chopButton.BackgroundColor3 = Color3.fromRGB(0,0,50)
+                oreModule.stopFarmingOre()
+            end
+        end)
+    end
 end
 
 local function createGUI()
@@ -148,6 +228,7 @@ local function createGUI()
     Close.TextSize = 14.000
     Close.MouseButton1Click:Connect(function()
     GUI:Destroy()
+    stopAllModules()
     end)
     
     Minimum.Name = "Minimum"
@@ -194,12 +275,27 @@ local function createGUI()
     oreSelection.BackgroundTransparency = 0.5
     oreSelection.BorderColor3 = Color3.new(1,1,1)
     oreSelection.ZIndex = 2
-    oreSelection.Text = "Auto-farm Ore >"
+    oreSelection.Text = "Auto-farm Minable >"
     oreSelection.TextColor3 = Color3.fromRGB(250,250,250)
     oreSelection.TextScaled = true
     oreSelection.LayoutOrder = 10
     oreSelection.Parent = Scroll
     oreSelection.MouseButton1Click:Connect(createOreBackground)
+    
+    local treeSelection = Instance.new("TextButton")
+    treeSelection.Name = "Auto-farm Choppables"
+    treeSelection.Position = UDim2.new(0,1,0,341)
+    treeSelection.Size = UDim2.new(0,100,0,20)
+    treeSelection.BackgroundColor3 = Color3.fromRGB(0,0,50)
+    treeSelection.BackgroundTransparency = 0.5
+    treeSelection.BorderColor3 = Color3.new(1,1,1)
+    treeSelection.ZIndex = 2
+    treeSelection.Text = "Auto-farm Choppables >"
+    treeSelection.TextColor3 = Color3.fromRGB(250,250,250)
+    treeSelection.TextScaled = true
+    treeSelection.LayoutOrder = 10
+    treeSelection.Parent = Scroll
+    treeSelection.MouseButton1Click:Connect(createTreeBackground)
     
     local noClipButton = Instance.new("TextButton")
     noClipButton.Name = "No Clip"
