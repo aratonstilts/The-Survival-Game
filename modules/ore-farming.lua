@@ -7,6 +7,7 @@ local VirtualInputManager = game:GetService("VirtualInputManager")
 local autoJumpDebounce = false
 local autoJumping = false
 local checkHealth
+local toolEquipDebounce = false
 
 local minerals = game:GetService("Workspace").worldResources.mineable
 
@@ -53,6 +54,7 @@ local function autoJump()
 end
 
 local function findTool(tool)
+    
     local toolToEquip
     
     for i,v in pairs(Player.Backpack:GetChildren()) do
@@ -61,19 +63,25 @@ local function findTool(tool)
         end
     end
     
+    
     return toolToEquip
 end
 
 local function equipTool(tool)
-    local mesh = Character:FindFirstChildWhichIsA("Tool")
-    if mesh and mesh:FindFirstChild("toolModel") and mesh.toolModel:FindFirstChildWhichIsA("MeshPart") and mesh.toolModel:FindFirstChildWhichIsA("MeshPart").Name:find(tool) then
-        return
-    else
-        if mesh then
-            mesh.Parent = Player.Backpack
+    if toolEquipDebounce == false then
+        toolEquipDebounce = true
+        local mesh = Character:FindFirstChildWhichIsA("Tool")
+        if mesh and mesh:FindFirstChild("toolModel") and mesh.toolModel:FindFirstChildWhichIsA("MeshPart") and mesh.toolModel:FindFirstChildWhichIsA("MeshPart").Name:find(tool) then
+            return
+        else
+            if mesh then
+                mesh.Parent = Player.Backpack
+            end
+            local toolToEquip = findTool(tool)
+            toolToEquip.Parent = Character
         end
-        local toolToEquip = findTool(tool)
-        toolToEquip.Parent = Character
+        task.wait(0.5)
+        toolEquipDebounce = false
     end
 end
 
