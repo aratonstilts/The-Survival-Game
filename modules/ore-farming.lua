@@ -78,7 +78,8 @@ local function equipTool(tool)
 end
 
 local function clickScreen()
-    equipTool("Pickaxe")
+    equipTool()
+    print("clicking")
     VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 1)
     task.wait(0.2)
     VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 1)
