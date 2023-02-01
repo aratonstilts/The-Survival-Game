@@ -9,6 +9,7 @@ local autoJumping = false
 local checkHealth
 
 local choppables = game:GetService("Workspace").worldResources.choppable
+local animals = game.Workspace.animals
 
 local function setTreeFarming(value)
     Player:SetAttribute("farmingChoppable", value)
@@ -33,6 +34,11 @@ local function getTree(treeName)
                         table.insert(trees, v)
                     end
                 end
+            end
+        end
+        for i,v in pairs(animals:GetChildren()) do
+            if v:IsA("Model") and v.PrimaryPart.Transparency == 0 then
+                table.insert(trees, v)
             end
         end
         
