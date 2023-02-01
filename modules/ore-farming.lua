@@ -87,10 +87,9 @@ end
 
 local function clickScreen()
     equipTool()
-    print("clicking")
-    VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 1)
+    VirtualInputManager:SendMouseButtonEvent(0, 500, 0, true, game, 1)
     task.wait(0.2)
-    VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 1)
+    VirtualInputManager:SendMouseButtonEvent(0, 500, 0, false, game, 1)
 end
 
 local function collectDrops(position)
