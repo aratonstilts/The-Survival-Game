@@ -131,7 +131,7 @@ local function startFarmingOre(ore) -- Iron Ore, Gold Vein
     task.spawn(autoJump)
     while Player:GetAttribute("farmingOre") and wait() do
         
-        checkHealth()
+        checkHealth(ore)
         
         local ores = getOre(ore)
         for i,v in pairs(ores) do
@@ -144,12 +144,23 @@ local function startFarmingOre(ore) -- Iron Ore, Gold Vein
     return
 end
 
-function checkHealth()
+function checkHealth(ore)
     local healthBar = Player.PlayerGui.Main["status"].health.container.bar.stat.Text
+    local spawnButton = Player.PlayerGui.Avatar.spawnButtons.spawn
+    
     if healthBar:sub(0,1) == "0" then
         stopFarmingOre()
+        
+        repeat wait() until spawnButton.Parent.Visible == true
+        firesignal(spawnButton.MouseButton1Click)
+        
         repeat wait() until game.Players.LocalPlayer.Character
-        startFarmingOre()
+        
+        Player = Players.LocalPlayer
+        Character = Player.Character
+        Humanoid = Character.Humanoid
+        HR = Character.HumanoidRootPart
+        startFarmingOre(ore)
     end
 end
 
