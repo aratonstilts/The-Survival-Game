@@ -7,7 +7,6 @@ local VirtualInputManager = game:GetService("VirtualInputManager")
 local autoJumpDebounce = false
 local autoJumping = false
 local checkHealth
-local toolEquipDebounce = false
 
 local minerals = game:GetService("Workspace").worldResources.mineable
 
@@ -54,39 +53,32 @@ local function autoJump()
 end
 
 local function findTool(tool)
-    
     local toolToEquip
     
     for i,v in pairs(Player.Backpack:GetChildren()) do
-        if v:FindFirstChild("toolModel") and v.toolModel:FindFirstChildWhichIsA("MeshPart") and v.toolModel:FindFirstChildWhichIsA("MeshPart").Name:find(tool) then
+        if v:FindFirstChild("toolModel") and v.toolModel:FindFirstChildWhichIsA("MeshPart").Name:find(tool) then
             toolToEquip = v
         end
     end
-    
     
     return toolToEquip
 end
 
 local function equipTool(tool)
-    if toolEquipDebounce == false then
-        toolEquipDebounce = true
-        local mesh = Character:FindFirstChildWhichIsA("Tool")
-        if mesh and mesh:FindFirstChild("toolModel") and mesh.toolModel:FindFirstChildWhichIsA("MeshPart") and mesh.toolModel:FindFirstChildWhichIsA("MeshPart").Name:find(tool) then
-            return
-        else
-            if mesh then
-                mesh.Parent = Player.Backpack
-            end
-            local toolToEquip = findTool(tool)
-            toolToEquip.Parent = Character
+    local mesh = Character:FindFirstChildWhichIsA("Tool")
+    if mesh and mesh:FindFirstChild("toolModel") and mesh.toolModel:FindFirstChildWhichIsA("MeshPart") and mesh.toolModel:FindFirstChildWhichIsA("MeshPart").Name:find(tool) then
+        return
+    else
+        if mesh then
+            mesh.Parent = Player.Backpack
         end
-        task.wait(0.5)
-        toolEquipDebounce = false
+        local toolToEquip = findTool(tool)
+        toolToEquip.Parent = Character
     end
 end
 
 local function clickScreen()
-    equipTool()
+    equipTool("Pickaxe")
     VirtualInputManager:SendMouseButtonEvent(0, 500, 0, true, game, 1)
     task.wait(0.2)
     VirtualInputManager:SendMouseButtonEvent(0, 500, 0, false, game, 1)
