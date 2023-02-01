@@ -109,9 +109,9 @@ end
 local function collectDrops(position)
     local drops = game.Workspace.droppedItems:GetChildren()
     for i,v in pairs(drops) do
-        if (v.Position - position).Magnitude < 30 then
+        if (v.Position - position).Magnitude < 50 then
             HR.CFrame = v.CFrame
-            task.wait(0.1)
+            task.wait()
         end
     end
 end
@@ -125,10 +125,11 @@ local function moveToTree(tree)
         task.wait()
         repeat
             clickScreen() 
-            HR.CFrame = CFrame.new(tree.PrimaryPart.Position + Vector3.new(0,0,3)) 
+            HR.CFrame = CFrame.new(tree.PrimaryPart.Position + Vector3.new(0,0,10)) 
         until tree.PrimaryPart.Transparency == 1 or Player:GetAttribute("farmingChoppable") == false
     end
     
+    task.wait(0.2)
     collectDrops(tree.PrimaryPart.Position)
     
     task.spawn(autoJump)
