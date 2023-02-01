@@ -8,7 +8,7 @@ local autoJumpDebounce = false
 local autoJumping = false
 local checkHealth
 
-local minerals = game:GetService("Workspace").worldResources.choppable
+local choppables = game:GetService("Workspace").worldResources.choppable
 
 local function setTreeFarming(value)
     Player:SetAttribute("farmingChoppable", value)
@@ -17,10 +17,32 @@ end
 local function getTree(treeName)
     local trees = {}
     
-    for i,v in pairs(minerals:GetDescendants()) do
-        if v.Name == treeName and v:FindFirstChildWhichIsA("MeshPart").Transparency == 0 then
-            table.insert(trees, v)
+    if treeName == "all" then
+        for i,v in pairs(choppables:GetDescendants()) do
+            if v:FindFirstChildWhichIsA("MeshPart").Transparency == 0 then
+                table.insert(trees, v)
+            end
         end
+        
+    elseif treeName == "foods" then
+        local listOfFoods = {"Berry Bush", "Bush", "Mushroom", "Carrot", "Wheat"}
+        for i,v in pairs(choppables:GetDescendants()) do
+            if v:FindFirstChildWhichIsA("MeshPart").Transparency == 0 then
+                for i2,v2 in pairs(listOfFoods) do
+                    if v.Name == v2 then
+                        table.insert(trees, v)
+                    end
+                end
+            end
+        end
+        
+    else
+        for i,v in pairs(choppables:GetDescendants()) do
+            if v.Name == treeName and v:FindFirstChildWhichIsA("MeshPart").Transparency == 0 then
+                table.insert(trees, v)
+            end
+        end
+    
     end
     
     
@@ -103,7 +125,7 @@ local function moveToTree(tree)
         task.wait()
         repeat
             clickScreen() 
-            HR.CFrame = CFrame.new(tree.PrimaryPart.Position + Vector3.new(0,0,5)) 
+            HR.CFrame = CFrame.new(tree.PrimaryPart.Position - Vector3.new(0,0,5)) 
         until tree.PrimaryPart.Transparency == 1 or Player:GetAttribute("farmingChoppable") == false
     end
     
