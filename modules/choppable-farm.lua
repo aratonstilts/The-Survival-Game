@@ -181,14 +181,14 @@ function checkHealth(tree)
         stopFarmingChoppable()
         
         clickSpawnButton()
-    
-        hideGUIS()
         
         repeat wait() until game.Players.LocalPlayer.Character
         Player = Players.LocalPlayer
         Character = Player.Character
         Humanoid = Character.Humanoid
         HR = Character.HumanoidRootPart
+        
+        hideGUIS()
         
         startFarmingChoppable(tree)
     end
