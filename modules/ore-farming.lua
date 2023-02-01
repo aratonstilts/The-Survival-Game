@@ -136,6 +136,20 @@ local function startFarmingOre(ore) -- Iron Ore, Gold Vein
     return
 end
 
+local function clickSpawnButton()
+    repeat wait() until spawnButton.Parent.Visible == true
+    task.wait(1)
+    firesignal(spawnButton.Activated)
+end
+
+local function hideGUIS()
+    for i,v in pairs(Player.PlayerGui.Avater:GetChildren()) do
+        if v:IsA("Frame") and v.Visible == true then
+            v.Visible = false
+        end
+    end
+end
+
 function checkHealth(ore)
     local healthBar = Player.PlayerGui.Main["status"].health.container.bar.stat.Text
     local spawnButton = Player.PlayerGui.Avatar.spawnButtons.spawn
@@ -143,16 +157,16 @@ function checkHealth(ore)
     if healthBar:sub(0,1) == "0" then
         stopFarmingOre()
         
-        repeat wait() until spawnButton.Parent.Visible == true
-        task.wait(1)
-        firesignal(spawnButton.MouseButton1Click)
+        clickSpawnButton()
+    
+        hideGUIS()
         
         repeat wait() until game.Players.LocalPlayer.Character
-        
         Player = Players.LocalPlayer
         Character = Player.Character
         Humanoid = Character.Humanoid
         HR = Character.HumanoidRootPart
+        
         startFarmingOre(ore)
     end
 end
