@@ -19,7 +19,7 @@ local function getTree(treeName)
     
     if treeName == "all" then
         for i,v in pairs(choppables:GetDescendants()) do
-            if v:FindFirstChildWhichIsA("MeshPart").Transparency == 0 then
+            if v:IsA("Model") and v:FindFirstChildWhichIsA("MeshPart").Transparency == 0 then
                 table.insert(trees, v)
             end
         end
@@ -27,7 +27,7 @@ local function getTree(treeName)
     elseif treeName == "foods" then
         local listOfFoods = {"Berry Bush", "Bush", "Mushroom", "Carrot", "Wheat"}
         for i,v in pairs(choppables:GetDescendants()) do
-            if v:FindFirstChildWhichIsA("MeshPart").Transparency == 0 then
+            if v:IsA("Model") and v:FindFirstChildWhichIsA("MeshPart").Transparency == 0 then
                 for i2,v2 in pairs(listOfFoods) do
                     if v.Name == v2 then
                         table.insert(trees, v)
