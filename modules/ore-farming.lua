@@ -125,6 +125,7 @@ local function startFarmingOre(ore) -- Iron Ore, Gold Vein
     while Player:GetAttribute("farmingOre") and wait() do
         
         checkHealth(ore)
+        checkFood()
         
         local ores = getOre(ore)
         for i,v in pairs(ores) do
