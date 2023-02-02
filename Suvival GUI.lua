@@ -128,6 +128,35 @@ local function createOreBackground()
     Grid2.SortOrder = "LayoutOrder"
     Grid2.Parent = Scroll2
     
+    local allOresButton = Instance.new("TextButton")
+    allOresButton.Name = "allOresButton"
+    allOresButton.Position = UDim2.new(0,1,0,341)
+    allOresButton.Size = UDim2.new(0,100,0,20)
+    allOresButton.BackgroundColor3 = Color3.fromRGB(0,0,50)
+    allOresButton.BackgroundTransparency = 0.5
+    allOresButton.BorderColor3 = Color3.new(1,1,1)
+    allOresButton.ZIndex = 2
+    allOresButton.Text = "All Minables"
+    allOresButton.TextColor3 = Color3.fromRGB(250,250,250)
+    allOresButton.TextScaled = true
+    allOresButton.LayoutOrder = 10
+    allOresButton.Parent = Scroll2
+    allOresButton.MouseButton1Click:Connect(function()
+        if allOresButton.Text == "All Choppables" then
+            RUN = true
+            Humanoid.WalkSpeed = 30
+            allOresButton.Text = "Mining All"
+            allOresButton.BackgroundColor3 = Color3.fromRGB(100,0,0)
+            stopAllModules()
+            oreModule.startFarmingOre("all")
+        else
+            RUN = false
+            allOresButton.Text = "All Choppables"
+            allOresButton.BackgroundColor3 = Color3.fromRGB(0,0,50)
+            treeModule.stopFarmingOre()
+        end
+    end)
+    
     local oreList = {"Iron Ore", "Copper Ore", "Coal Ore", "Stone", "Boulder", "Bluesteel", "Gold Vein"}
     for i,v in pairs(oreList) do
         local goldOreButton = Instance.new("TextButton")
