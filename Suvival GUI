@@ -11,12 +11,16 @@ end
 
 local oreModule = loadModule("https://raw.githubusercontent.com/aratonstilts/The-Survival-Game/main/modules/ore-farming.lua")
 local treeModule = loadModule("https://raw.githubusercontent.com/aratonstilts/The-Survival-Game/main/modules/choppable-farm.lua")
+local farmModule = loadModule("https://raw.githubusercontent.com/aratonstilts/The-Survival-Game/main/modules/farming.lua")
+local pickupRangeModule = loadModule("https://raw.githubusercontent.com/aratonstilts/The-Survival-Game/main/modules/increase-range.lua")
 
 print("Finished loading")
 
 local function stopAllModules()
     oreModule.stopFarmingOre()
     treeModule.stopFarmingChoppable()
+    pickupRangeModule.regularPickupRange()
+    farmModule.stopTillingUnderPlayer()
 end
 
 local Character = game.Players.LocalPlayer.Character
@@ -33,8 +37,6 @@ local function NoclipLoop()
     	end
     end
 end
-
-local RUN = false
 
 local function checkHealth()
     local healthBar = Player.PlayerGui.Main["status"].health.container.bar.stat.Text
@@ -56,6 +58,7 @@ local function checkHealth()
     end
 end
 
+local RUN = false
 Humanoid:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
     if RUN then
         Humanoid.WalkSpeed = 30
@@ -68,17 +71,32 @@ local Scroll = Instance.new("ScrollingFrame")
 local Close = Instance.new("TextButton")
 local Minimum = Instance.new("TextButton")
 local draggableName = Instance.new("TextButton")
+local Grid = Instance.new("UIGridLayout")
+local oreSelection = Instance.new("TextButton")
+local treeSelection = Instance.new("TextButton")
+local farmSelection = Instance.new("TextButton")
+local fastWalkButton = Instance.new("TextButton")
+local noClipButton = Instance.new("TextButton")
+local increaseRangeButton = Instance.new("TextButton")
 
 
 
 local function createOreBackground()
+    
     local oldBackground = game.CoreGui["Survival GUI"].Background:GetChildren()
     for i,v in pairs(oldBackground) do
         if v:IsA("Frame") then
             v:Destroy()
-            return
         end
     end
+    
+    
+    if oreSelection.Text == "Auto-farm Minable <" then
+        oreSelection.Text = "Auto-farm Minable >"
+        return
+    end
+    oreSelection.Text = "Auto-farm Minable <"
+    treeSelection.Text = "Auto-farm Choppables >"
     
     local oreBackground = Instance.new("Frame")
     local Scroll2 = Instance.new("ScrollingFrame")
@@ -144,13 +162,20 @@ local function createOreBackground()
 end
 
 local function createTreeBackground()
+    
     local oldBackground = game.CoreGui["Survival GUI"].Background:GetChildren()
     for i,v in pairs(oldBackground) do
         if v:IsA("Frame") then
             v:Destroy()
-            return
         end
     end
+    
+    if treeSelection.Text == "Auto-farm Choppables <" then
+        treeSelection.Text = "Auto-farm Choppables >"
+        return
+    end
+    oreSelection.Text = "Auto-farm Minable >"
+    treeSelection.Text = "Auto-farm Choppables <"
     
     local treeBackground = Instance.new("Frame")
     local Scroll2 = Instance.new("ScrollingFrame")
@@ -273,6 +298,132 @@ local function createTreeBackground()
     end
 end
 
+local function createFarmBackground()
+    
+    local oldBackground = game.CoreGui["Survival GUI"].Background:GetChildren()
+    for i,v in pairs(oldBackground) do
+        if v:IsA("Frame") then
+            v:Destroy()
+        end
+    end
+    
+    
+    if farmSelection.Text == "Farm Stuff <" then
+        farmSelection.Text = "Farm Stuff >"
+        return
+    end
+    farmSelection.Text = "Farm Stuff <"
+    oreSelection.Text = "Auto-farm Minable >"
+    treeSelection.Text = "Auto-farm Choppables >"
+    
+    local farmBackground = Instance.new("Frame")
+    local Scroll2 = Instance.new("ScrollingFrame")
+    
+    farmBackground.Name = "Farm Background"
+    farmBackground.Parent = Background
+    farmBackground.BackgroundColor3 = Color3.fromRGB(0,0,0)
+    farmBackground.BorderSizePixel = 0
+    farmBackground.BackgroundTransparency = 0.5
+    farmBackground.Position = UDim2.new(1, 0, 0, 0)
+    farmBackground.AnchorPoint = Vector2.new(0,0)
+    farmBackground.Size = UDim2.new(0, 200, 0, 275)
+    farmBackground.Active = true
+
+    Scroll2.Name = "Scroll Menu"
+    Scroll2.Parent = farmBackground
+    Scroll2.Active = true
+    Scroll2.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Scroll2.BackgroundTransparency = 1
+    Scroll2.BorderSizePixel = 0
+    Scroll2.AutomaticCanvasSize = "Y"
+    Scroll2.Position = UDim2.new(0, 0, 0, 0)
+    Scroll2.Size = UDim2.new(1,0,1,0)
+    Scroll2.ScrollBarThickness = 4
+
+    local Grid2 = Instance.new("UIGridLayout")
+    Grid2.CellSize = UDim2.new(1,0,0,25)
+    Grid2.CellPadding = UDim2.new(0,1,0,5)
+    Grid2.SortOrder = "LayoutOrder"
+    Grid2.Parent = Scroll2
+    
+    local titleForPlants = Instance.new("TextLabel")
+    titleForPlants.Name = "Click to plant"
+    titleForPlants.Parent = Scroll2
+    titleForPlants.BackgroundColor3 = Color3.fromRGB(100, 0, 0)
+    titleForPlants.BackgroundTransparency = 1
+    titleForPlants.BorderSizePixel = 0
+    titleForPlants.Size = UDim2.new(0, 120, 0, 15)
+    titleForPlants.Font = Enum.Font.GothamBlack
+    titleForPlants.Text = "Click to plant"
+    titleForPlants.TextColor3 = Color3.fromRGB(255, 255, 255)
+    titleForPlants.TextScaled = true
+    titleForPlants.TextSize = 14.000
+    titleForPlants.TextWrapped = true
+    
+    local farmingList = {"carrot", "wheat"}
+    for i,v in pairs(farmingList) do
+        local plantPlantButton = Instance.new("TextButton")
+        plantPlantButton.Name = v
+        plantPlantButton.Position = UDim2.new(0,1,0,341)
+        plantPlantButton.Size = UDim2.new(0,100,0,20)
+        plantPlantButton.BackgroundColor3 = Color3.fromRGB(0,0,50)
+        plantPlantButton.BackgroundTransparency = 0.5
+        plantPlantButton.BorderColor3 = Color3.new(1,1,1)
+        plantPlantButton.ZIndex = 2
+        plantPlantButton.Text = v
+        plantPlantButton.TextColor3 = Color3.fromRGB(250,250,250)
+        plantPlantButton.TextScaled = true
+        plantPlantButton.LayoutOrder = 10
+        plantPlantButton.Parent = Scroll2
+        plantPlantButton.MouseButton1Click:Connect(function()
+            farmModule.plantOnTilled(v)
+        end)
+    end
+    
+    local harvestFarmButton = Instance.new("TextButton")
+    harvestFarmButton.Name = "harvest farmland"
+    harvestFarmButton.Position = UDim2.new(0,1,0,341)
+    harvestFarmButton.Size = UDim2.new(0,100,0,20)
+    harvestFarmButton.BackgroundColor3 = Color3.fromRGB(0,0,50)
+    harvestFarmButton.BackgroundTransparency = 0.5
+    harvestFarmButton.BorderColor3 = Color3.new(1,1,1)
+    harvestFarmButton.ZIndex = 2
+    harvestFarmButton.Text = "Harvest nearby farmland"
+    harvestFarmButton.TextColor3 = Color3.fromRGB(250,250,250)
+    harvestFarmButton.TextScaled = true
+    harvestFarmButton.LayoutOrder = 10
+    harvestFarmButton.Parent = Scroll2
+    harvestFarmButton.MouseButton1Click:Connect(function()
+        farmModule.harvestFarmland()
+    end)
+    
+    local autoTillButton = Instance.new("TextButton")
+    autoTillButton.Name = "autoTillButton"
+    autoTillButton.Position = UDim2.new(0,1,0,341)
+    autoTillButton.Size = UDim2.new(0,100,0,20)
+    autoTillButton.BackgroundColor3 = Color3.fromRGB(0,0,50)
+    autoTillButton.BackgroundTransparency = 0.5
+    autoTillButton.BorderColor3 = Color3.new(1,1,1)
+    autoTillButton.ZIndex = 2
+    autoTillButton.Text = "Till Under Player"
+    autoTillButton.TextColor3 = Color3.fromRGB(250,250,250)
+    autoTillButton.TextScaled = true
+    autoTillButton.LayoutOrder = 10
+    autoTillButton.Parent = Scroll2
+    autoTillButton.MouseButton1Click:Connect(function()
+        if autoTillButton.Text == "Till Under Player" then
+            noClipButton.BackgroundColor3 = Color3.fromRGB(0,0,250)
+            autoTillButton.Text = "Tilling Under Player"
+            farmModule.startTillingUnderPlayer()
+        else
+            autoTillButton.Text = "Till Under Player"
+            autoTillButton.BackgroundColor3 = Color3.fromRGB(0,0,50)
+            farmModule.stopTillingUnderPlayer()
+        end
+    end)
+    
+end
+
 
 local function createGUI()
     if game:GetService("CoreGui"):FindFirstChild("Survival GUI") then
@@ -339,8 +490,18 @@ local function createGUI()
     Minimum.MouseButton1Click:Connect(function()
     	if Background.BackgroundTransparency == 0.5 then
     		Background.BackgroundTransparency = 1
+    		for i,v in pairs(Background:GetChildren()) do
+    		    if v:IsA("ScrollingFrame") or v:IsA("Frame") then
+    		        v.Visible = false
+    		    end
+            end
     	elseif Background.BackgroundTransparency == 1 then
     		Background.BackgroundTransparency = 0.5
+    		for i,v in pairs(Background:GetChildren()) do
+    		    if v:IsA("ScrollingFrame") or v:IsA("Frame") then
+    		        v.Visible = true
+    		    end
+            end
     	end
     end)
     
@@ -355,13 +516,11 @@ local function createGUI()
     Scroll.Size = UDim2.new(1,0,1,-25)
     Scroll.ScrollBarThickness = 4
     
-    local Grid = Instance.new("UIGridLayout")
     Grid.CellSize = UDim2.new(1,0,0,25)
     Grid.CellPadding = UDim2.new(0,1,0,5)
     Grid.SortOrder = "LayoutOrder"
     Grid.Parent = Scroll
     
-    local oreSelection = Instance.new("TextButton")
     oreSelection.Name = "Auto-farm Ore"
     oreSelection.Position = UDim2.new(0,1,0,341)
     oreSelection.Size = UDim2.new(0,100,0,20)
@@ -376,7 +535,6 @@ local function createGUI()
     oreSelection.Parent = Scroll
     oreSelection.MouseButton1Click:Connect(createOreBackground)
     
-    local treeSelection = Instance.new("TextButton")
     treeSelection.Name = "Auto-farm Choppables"
     treeSelection.Position = UDim2.new(0,1,0,341)
     treeSelection.Size = UDim2.new(0,100,0,20)
@@ -391,7 +549,20 @@ local function createGUI()
     treeSelection.Parent = Scroll
     treeSelection.MouseButton1Click:Connect(createTreeBackground)
     
-    local fastWalkButton = Instance.new("TextButton")
+    farmSelection.Name = "Farm Stuff"
+    farmSelection.Position = UDim2.new(0,1,0,341)
+    farmSelection.Size = UDim2.new(0,100,0,20)
+    farmSelection.BackgroundColor3 = Color3.fromRGB(0,0,50)
+    farmSelection.BackgroundTransparency = 0.5
+    farmSelection.BorderColor3 = Color3.new(1,1,1)
+    farmSelection.ZIndex = 2
+    farmSelection.Text = "Farm Stuff >"
+    farmSelection.TextColor3 = Color3.fromRGB(250,250,250)
+    farmSelection.TextScaled = true
+    farmSelection.LayoutOrder = 10
+    farmSelection.Parent = Scroll
+    farmSelection.MouseButton1Click:Connect(createFarmBackground)
+    
     fastWalkButton.Name = "Fast Walk"
     fastWalkButton.Position = UDim2.new(0,1,0,341)
     fastWalkButton.Size = UDim2.new(0,100,0,20)
@@ -417,7 +588,6 @@ local function createGUI()
         end
     end)
     
-    local noClipButton = Instance.new("TextButton")
     noClipButton.Name = "No Clip"
     noClipButton.Position = UDim2.new(0,1,0,341)
     noClipButton.Size = UDim2.new(0,100,0,20)
@@ -441,6 +611,30 @@ local function createGUI()
             noClipButton.BackgroundColor3 = Color3.fromRGB(0,0,50)
             NoClipping:Disconnect()
             noClip = false
+        end
+    end)
+    
+    increaseRangeButton.Name = "Increase Pickup Range"
+    increaseRangeButton.Position = UDim2.new(0,1,0,341)
+    increaseRangeButton.Size = UDim2.new(0,100,0,20)
+    increaseRangeButton.BackgroundColor3 = Color3.fromRGB(0,0,50)
+    increaseRangeButton.BackgroundTransparency = 0.5
+    increaseRangeButton.BorderColor3 = Color3.new(1,1,1)
+    increaseRangeButton.ZIndex = 2
+    increaseRangeButton.Text = "Increase Pickup Range"
+    increaseRangeButton.TextColor3 = Color3.fromRGB(250,250,250)
+    increaseRangeButton.TextScaled = true
+    increaseRangeButton.LayoutOrder = 10
+    increaseRangeButton.Parent = Scroll
+    increaseRangeButton.MouseButton1Click:Connect(function()
+        if increaseRangeButton.Text == "Increase Pickup Range" then
+            increaseRangeButton.Text = "Increased Range"
+            increaseRangeButton.BackgroundColor3 = Color3.fromRGB(0,0,250)
+            pickupRangeModule.increasePickupRange()
+        else
+            increaseRangeButton.Text = "Increase Pickup Range"
+            increaseRangeButton.BackgroundColor3 = Color3.fromRGB(0,0,50)
+            pickupRangeModule.regularPickupRange()
         end
     end)
 end
