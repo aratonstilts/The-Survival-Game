@@ -1,5 +1,7 @@
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
+local Character = Player.Character
+local HR = Character.HumanoidRootPart
 
 local function findTool(tool)
     local toolToEquip
@@ -11,6 +13,20 @@ local function findTool(tool)
     end
     
     return toolToEquip
+end
+
+local function setAutoTilling(value)
+    Player:SetAttribute("autoTilling", value)
+end
+
+local function tillUnderPlayer()
+    local args = {
+    [1] = findTool("Shovel"),
+    [2] = HR.Position - Vector3.new(0,3,0),
+    [3] = 0
+    }
+
+    game:GetService("ReplicatedStorage").remoteInterface.interactions.createFarmland:FireServer(unpack(args))
 end
 
 local function getTilledLand()
@@ -55,7 +71,20 @@ local function harvestFarmland()
     end
 end
 
+local function startTillingUnderPlayer()
+    setAutoTilling(true)
+    while Player:GetAttribute("autoTilling") and wait() do
+        tillUnderPlayer()
+    end
+end
+
+local function stopTillingUnderPlayer()
+    setAutoTilling(false)
+end
+
 return {
   plantOnTilled = plantOnTilled, -- "carrot" "wheat"
-  harvestFarmland = harvestFarmland
+  harvestFarmland = harvestFarmland,
+  startTillingUnderPlayer = startTillingUnderPlayer,
+  stopTillingUnderPlayer = stopTillingUnderPlayer
 }
