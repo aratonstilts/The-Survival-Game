@@ -18,12 +18,20 @@ end
 local function getOre(oreName)
     local ores = {}
     
-    for i,v in pairs(minerals:GetDescendants()) do
-        if v.Name == oreName and v:FindFirstChildWhichIsA("MeshPart").Transparency == 0 then
-            table.insert(ores, v)
+    
+    if oreName == "all" then
+        for i,v in pairs(minerals:GetDescendants()) do
+            if v.Name == oreName and v:FindFirstChildWhichIsA("MeshPart").Transparency == 0 then
+                table.insert(ores, v)
+            end
+        end
+    else
+        for i,v in pairs(minerals:GetDescendants()) do
+            if v.Name == oreName and v:FindFirstChildWhichIsA("MeshPart").Transparency == 0 then
+                table.insert(ores, v)
+            end
         end
     end
-    
     
     table.sort(ores, function(t1, t2) 
 		return Player:DistanceFromCharacter(t1.PrimaryPart.Position) < Player:DistanceFromCharacter(t2.PrimaryPart.Position) end)
