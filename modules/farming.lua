@@ -41,6 +41,6 @@ local function harvestFarmland()
 end
 
 return {
-  plantOnTilled(), -- "carrot" "wheat"
-  harvestFarmland()
+  plantOnTilled = plantOnTilled, -- "carrot" "wheat"
+  harvestFarmland = harvestFarmland
 }
