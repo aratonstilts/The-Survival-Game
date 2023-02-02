@@ -192,7 +192,7 @@ local function eatFood()
 end
 
 function checkFood()
-    local foodBar = Player.PlayerGui.Main.status.hunger.container.bar.stat
+    local foodBar = Player.PlayerGui.Main.status.hunger.container.bar.stat.Text
     if foodBar:sub(0,1) == "9" then
         for i = 1,2 do
             eatFood()
