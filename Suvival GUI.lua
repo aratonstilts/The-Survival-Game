@@ -142,7 +142,7 @@ local function createOreBackground()
     allOresButton.LayoutOrder = 10
     allOresButton.Parent = Scroll2
     allOresButton.MouseButton1Click:Connect(function()
-        if allOresButton.Text == "All Choppables" then
+        if allOresButton.Text == "All Minables" then
             RUN = true
             Humanoid.WalkSpeed = 30
             allOresButton.Text = "Mining All"
@@ -151,7 +151,7 @@ local function createOreBackground()
             oreModule.startFarmingOre("all")
         else
             RUN = false
-            allOresButton.Text = "All Choppables"
+            allOresButton.Text = "All Minables"
             allOresButton.BackgroundColor3 = Color3.fromRGB(0,0,50)
             treeModule.stopFarmingOre()
         end
