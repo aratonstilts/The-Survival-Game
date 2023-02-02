@@ -412,7 +412,7 @@ local function createFarmBackground()
     autoTillButton.Parent = Scroll2
     autoTillButton.MouseButton1Click:Connect(function()
         if autoTillButton.Text == "Till Under Player" then
-            noClipButton.BackgroundColor3 = Color3.fromRGB(0,0,250)
+            autoTillButton.BackgroundColor3 = Color3.fromRGB(0,0,250)
             autoTillButton.Text = "Tilling Under Player"
             farmModule.startTillingUnderPlayer()
         else
