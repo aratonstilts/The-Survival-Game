@@ -44,7 +44,7 @@ local function getTree(treeName)
         
     else
         for i,v in pairs(choppables:GetDescendants()) do
-            if v.Name == treeName and v:FindFirstChildWhichIsA("MeshPart").Transparency == 0 then
+            if v:IsA("Model") and v.Name == treeName and v:FindFirstChildWhichIsA("MeshPart").Transparency == 0 then
                 table.insert(trees, v)
             end
         end
