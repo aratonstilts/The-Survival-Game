@@ -1,5 +1,5 @@
 local Players = game:GetService("Players")
-local Player = Players.Player
+local Player = Players.LocalPlayer
 
 local function setRangeIncrease(value)
     Player:SetAttribute("increaseRange", value)
