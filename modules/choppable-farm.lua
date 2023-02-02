@@ -7,6 +7,7 @@ local VirtualInputManager = game:GetService("VirtualInputManager")
 local autoJumpDebounce = false
 local autoJumping = false
 local checkHealth
+local checkFood
 
 local choppables = game:GetService("Workspace").worldResources.choppable
 local animals = game.Workspace.animals
@@ -153,6 +154,7 @@ local function startFarmingChoppable(tree)
     while Player:GetAttribute("farmingChoppable") and wait() do
         
         checkHealth(tree)
+        checkFood(tree)
         
         local trees = getTree(tree)
         for i,v in pairs(trees) do
@@ -197,6 +199,35 @@ function checkHealth(tree)
         hideGUIS()
         
         startFarmingChoppable(tree)
+    end
+end
+
+local function findFoodInBackpack()
+    local backpack = game:GetService("Players").T1CKETmaster.PlayerGui.Inventory.nonHotbar.menuContainer.inventory.frame.content.backpack
+    
+    for i,v in pairs(backpack:GetChildren()) do
+        if v:IsA("ImageButton") and v:FindFirstChild("viewport") and v.viewport:FindFirstChild("stats") and v.viewport.stats:FindFirstChild("food") then
+           return v.Name
+        end 
+    end
+end
+
+local function eatFood()
+    local foodNumber = findFoodInBackpack()
+    local args = {
+    [1] = tonumber(foodNumber)
+    }
+
+    game:GetService("ReplicatedStorage"):WaitForChild("remoteInterface"):WaitForChild("interactions"):WaitForChild("eat"):FireServer(unpack(args))
+end
+
+function checkFood()
+    local foodBar = game:GetService("Players").T1CKETmaster.PlayerGui.Main.status.hunger.container.bar.stat
+    if foodBar:sub(0,1) == "9" then
+        for i = 1,2 do
+            eatFood()
+            task.wait(1)
+        end
     end
 end
 
