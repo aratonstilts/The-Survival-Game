@@ -73,7 +73,7 @@ local function equipTool(tool)
         if mesh then
             mesh.Parent = Player.Backpack
         end
-        local toolToEquip = findTool(tool)
+        local toolToEquip = findTool(tool) or Character:FindFirstChildWhichIsA("Tool")
         toolToEquip.Parent = Character
     end
 end
