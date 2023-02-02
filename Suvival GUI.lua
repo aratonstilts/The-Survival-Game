@@ -153,7 +153,7 @@ local function createOreBackground()
             RUN = false
             allOresButton.Text = "All Minables"
             allOresButton.BackgroundColor3 = Color3.fromRGB(0,0,50)
-            treeModule.stopFarmingOre()
+            oreModule.stopFarmingOre()
         end
     end)
     
