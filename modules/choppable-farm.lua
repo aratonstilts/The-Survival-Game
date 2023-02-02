@@ -203,7 +203,7 @@ function checkHealth(tree)
 end
 
 local function findFoodInBackpack()
-    local backpack = game:GetService("Players").T1CKETmaster.PlayerGui.Inventory.nonHotbar.menuContainer.inventory.frame.content.backpack
+    local backpack = Player.PlayerGui.Inventory.nonHotbar.menuContainer.inventory.frame.content.backpack
     
     for i,v in pairs(backpack:GetChildren()) do
         if v:IsA("ImageButton") and v:FindFirstChild("viewport") and v.viewport:FindFirstChild("stats") and v.viewport.stats:FindFirstChild("food") then
@@ -222,7 +222,7 @@ local function eatFood()
 end
 
 function checkFood()
-    local foodBar = game:GetService("Players").T1CKETmaster.PlayerGui.Main.status.hunger.container.bar.stat
+    local foodBar = Player.PlayerGui.Main.status.hunger.container.bar.stat
     if foodBar:sub(0,1) == "9" then
         for i = 1,2 do
             eatFood()
