@@ -1,3 +1,18 @@
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+
+local function findTool(tool)
+    local toolToEquip
+    
+    for i,v in pairs(Player.Backpack:GetChildren()) do
+        if v:FindFirstChild("toolModel") and v.toolModel:FindFirstChildWhichIsA("MeshPart").Name:find(tool) then
+            toolToEquip = v
+        end
+    end
+    
+    return toolToEquip
+end
+
 local function getTilledLand()
     local tilledDirt = {}
     
@@ -20,7 +35,7 @@ local function plantOnTilled(plant)
     
     for i,v in pairs(tilledDirt) do
         local args = {
-        [1] = 5, -- probably the hotbar number for shovel
+        [1] = findTool("Shovel"),
         [2] = plantNumber,
         [3] = v
         }
@@ -32,7 +47,7 @@ local function harvestFarmland()
     local tilledDirt = getTilledLand()
     for i,v in pairs(tilledDirt) do
         local args = {
-        [1] = 4, -- hotbar slot for axe
+        [1] = findTool("Axe"),
         [2] = v
         }
 
