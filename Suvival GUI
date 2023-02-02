@@ -10,7 +10,7 @@ function loadModule(url)
 end
 
 local oreModule = loadModule("https://raw.githubusercontent.com/aratonstilts/The-Survival-Game/main/modules/ore-farming.lua")
-local treeModule = loadModule("https://raw.githubusercontent.com/aratonstilts/The-Survival-Game/main/modules/ore-farming.lua")
+local treeModule = loadModule("https://raw.githubusercontent.com/aratonstilts/The-Survival-Game/main/modules/choppable-farm.lua")
 
 print("Finished loading")
 
@@ -20,10 +20,11 @@ local function stopAllModules()
 end
 
 local Character = game.Players.LocalPlayer.Character
+local Humanoid = Character.Humanoid
 
 local noClip = false
 
-local function NoclipLoop() -- lets you walk through stuff
+local function NoclipLoop()
     if noClip == true then
         for _, child in pairs(Character:GetDescendants()) do
             if child:IsA("BasePart") and child.CanCollide == true and child.Name ~= floatName then
@@ -32,6 +33,34 @@ local function NoclipLoop() -- lets you walk through stuff
     	end
     end
 end
+
+local RUN = false
+
+local function checkHealth()
+    local healthBar = Player.PlayerGui.Main["status"].health.container.bar.stat.Text
+    if healthBar:sub(0,1) == "0" then
+        local spawnButton = Player.PlayerGui.Avatar.spawnButtons.spawn
+        repeat wait() until spawnButton.Parent.Visible == true
+        task.wait(2)
+        
+        
+        repeat wait() until game.Players.LocalPlayer.Character
+        Player = Players.LocalPlayer
+        Character = Player.Character
+        Humanoid = Character.Humanoid
+        HR = Character.HumanoidRootPart
+        
+        hideGUIS()
+        
+        startFarmingChoppable(tree)
+    end
+end
+
+Humanoid:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
+    if RUN then
+        Humanoid.WalkSpeed = 30
+    end
+end)
 
 local GUI = Instance.new("ScreenGui")
 local Background = Instance.new("Frame")
@@ -101,8 +130,11 @@ local function createOreBackground()
                 goldOreButton.Text = "Mining "..v
                 goldOreButton.BackgroundColor3 = Color3.fromRGB(100,0,0)
                 stopAllModules()
+                RUN = true
+                Humanoid.WalkSpeed = 30
                 oreModule.startFarmingOre(v)
             else
+                RUN = false
                 goldOreButton.Text = v
                 goldOreButton.BackgroundColor3 = Color3.fromRGB(0,0,50)
                 oreModule.stopFarmingOre()
@@ -150,6 +182,64 @@ local function createTreeBackground()
     Grid2.SortOrder = "LayoutOrder"
     Grid2.Parent = Scroll2
     
+    local allWoodsButton = Instance.new("TextButton")
+    allWoodsButton.Name = "all Woods"
+    allWoodsButton.Position = UDim2.new(0,1,0,341)
+    allWoodsButton.Size = UDim2.new(0,100,0,20)
+    allWoodsButton.BackgroundColor3 = Color3.fromRGB(0,0,50)
+    allWoodsButton.BackgroundTransparency = 0.5
+    allWoodsButton.BorderColor3 = Color3.new(1,1,1)
+    allWoodsButton.ZIndex = 2
+    allWoodsButton.Text = "All Choppables"
+    allWoodsButton.TextColor3 = Color3.fromRGB(250,250,250)
+    allWoodsButton.TextScaled = true
+    allWoodsButton.LayoutOrder = 10
+    allWoodsButton.Parent = Scroll2
+    allWoodsButton.MouseButton1Click:Connect(function()
+        if allWoodsButton.Text == "All Choppables" then
+            RUN = true
+            Humanoid.WalkSpeed = 30
+            allWoodsButton.Text = "Chopping All"
+            allWoodsButton.BackgroundColor3 = Color3.fromRGB(100,0,0)
+            stopAllModules()
+            treeModule.startFarmingChoppable("all")
+        else
+            RUN = false
+            allWoodsButton.Text = "All Choppables"
+            allWoodsButton.BackgroundColor3 = Color3.fromRGB(0,0,50)
+            treeModule.stopFarmingChoppable()
+        end
+    end)
+    
+    local allFoodsButton = Instance.new("TextButton")
+    allFoodsButton.Name = "all Woods"
+    allFoodsButton.Position = UDim2.new(0,1,0,341)
+    allFoodsButton.Size = UDim2.new(0,100,0,20)
+    allFoodsButton.BackgroundColor3 = Color3.fromRGB(0,0,50)
+    allFoodsButton.BackgroundTransparency = 0.5
+    allFoodsButton.BorderColor3 = Color3.new(1,1,1)
+    allFoodsButton.ZIndex = 2
+    allFoodsButton.Text = "Foods"
+    allFoodsButton.TextColor3 = Color3.fromRGB(250,250,250)
+    allFoodsButton.TextScaled = true
+    allFoodsButton.LayoutOrder = 10
+    allFoodsButton.Parent = Scroll2
+    allFoodsButton.MouseButton1Click:Connect(function()
+        if allFoodsButton.Text == "Foods" then
+            allFoodsButton.Text = "Chopping all Foods"
+            allFoodsButton.BackgroundColor3 = Color3.fromRGB(100,0,0)
+            stopAllModules()
+            RUN = true
+            Humanoid.WalkSpeed = 30
+            treeModule.startFarmingChoppable("foods")
+        else
+            RUN = false
+            allFoodsButton.Text = "Foods"
+            allFoodsButton.BackgroundColor3 = Color3.fromRGB(0,0,50)
+            treeModule.stopFarmingChoppable()
+        end
+    end)
+    
     local chopList = {"Big Oak Tree", "Pine Tree", "Oak Tree", "Big Pine Tree", "Berry Bush", "Bush", "Mushroom", "Carrot", "Wheat", "Palm Tree", "Big Palm Tree", "Jungle Tree", "Big Jungle Tree", "Jungle Vine"}
     for i,v in pairs(chopList) do
         local chopButton = Instance.new("TextButton")
@@ -170,15 +260,19 @@ local function createTreeBackground()
                 chopButton.Text = "Chopping "..v
                 chopButton.BackgroundColor3 = Color3.fromRGB(100,0,0)
                 stopAllModules()
-                oreModule.startFarmingOre(v)
+                RUN = true
+                Humanoid.WalkSpeed = 30
+                treeModule.startFarmingChoppable(v)
             else
+                RUN = false
                 chopButton.Text = v
                 chopButton.BackgroundColor3 = Color3.fromRGB(0,0,50)
-                oreModule.stopFarmingOre()
+                treeModule.stopFarmingChoppable()
             end
         end)
     end
 end
+
 
 local function createGUI()
     if game:GetService("CoreGui"):FindFirstChild("Survival GUI") then
@@ -296,6 +390,32 @@ local function createGUI()
     treeSelection.LayoutOrder = 10
     treeSelection.Parent = Scroll
     treeSelection.MouseButton1Click:Connect(createTreeBackground)
+    
+    local fastWalkButton = Instance.new("TextButton")
+    fastWalkButton.Name = "Fast Walk"
+    fastWalkButton.Position = UDim2.new(0,1,0,341)
+    fastWalkButton.Size = UDim2.new(0,100,0,20)
+    fastWalkButton.BackgroundColor3 = Color3.fromRGB(0,0,50)
+    fastWalkButton.BackgroundTransparency = 0.5
+    fastWalkButton.BorderColor3 = Color3.new(1,1,1)
+    fastWalkButton.ZIndex = 2
+    fastWalkButton.Text = "Fast Walk"
+    fastWalkButton.TextColor3 = Color3.fromRGB(250,250,250)
+    fastWalkButton.TextScaled = true
+    fastWalkButton.LayoutOrder = 10
+    fastWalkButton.Parent = Scroll
+    fastWalkButton.MouseButton1Click:Connect(function()
+        if RUN == false then
+            RUN = true
+            Humanoid.WalkSpeed = 30
+            fastWalkButton.Text = "Walking Fast"
+            fastWalkButton.BackgroundColor3 = Color3.fromRGB(100,0,0)
+        else
+            RUN = false
+            fastWalkButton.Text = "Fast Walk"
+            fastWalkButton.BackgroundColor3 = Color3.fromRGB(0,0,50)
+        end
+    end)
     
     local noClipButton = Instance.new("TextButton")
     noClipButton.Name = "No Clip"
