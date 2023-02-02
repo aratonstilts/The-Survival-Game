@@ -12,7 +12,7 @@ local function findTool(tool)
         end
     end
     
-    return toolToEquip
+    return tonumber(toolToEquip.Name)
 end
 
 local function setAutoTilling(value)
