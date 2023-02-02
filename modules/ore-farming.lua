@@ -21,7 +21,7 @@ local function getOre(oreName)
     
     if oreName == "all" then
         for i,v in pairs(minerals:GetDescendants()) do
-            if v.Name == oreName and v:FindFirstChildWhichIsA("MeshPart").Transparency == 0 then
+            if v:FindFirstChildWhichIsA("MeshPart").Transparency == 0 then
                 table.insert(ores, v)
             end
         end
