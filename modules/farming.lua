@@ -47,6 +47,12 @@ local function plantOnTilled(plant)
         plantNumber = 107
     elseif plant == "carrot" then
         plantNumber = 95
+    elseif plant == "berry" then
+        plantNumber = 113
+    elseif plant == "cabbage" then
+        plantNumber = 210
+    elseif plant == "pepper" then
+        plantNumber = 211
     end
     
     for i,v in pairs(tilledDirt) do
