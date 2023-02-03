@@ -38,26 +38,6 @@ local function NoclipLoop()
     end
 end
 
-local function checkHealth()
-    local healthBar = Player.PlayerGui.Main["status"].health.container.bar.stat.Text
-    if healthBar:sub(0,1) == "0" then
-        local spawnButton = Player.PlayerGui.Avatar.spawnButtons.spawn
-        repeat wait() until spawnButton.Parent.Visible == true
-        task.wait(2)
-        
-        
-        repeat wait() until game.Players.LocalPlayer.Character
-        Player = Players.LocalPlayer
-        Character = Player.Character
-        Humanoid = Character.Humanoid
-        HR = Character.HumanoidRootPart
-        
-        hideGUIS()
-        
-        startFarmingChoppable(tree)
-    end
-end
-
 local RUN = false
 Humanoid:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
     if RUN then
@@ -294,7 +274,7 @@ local function createTreeBackground()
         end
     end)
     
-    local chopList = {"Big Oak Tree", "Pine Tree", "Oak Tree", "Big Pine Tree", "Berry Bush", "Bush", "Mushroom", "Carrot", "Wheat", "Palm Tree", "Big Palm Tree", "Jungle Tree", "Big Jungle Tree", "Jungle Vine"}
+    local chopList = {"Cabbages", "Peppers", "Big Oak Tree", "Pine Tree", "Oak Tree", "Big Pine Tree", "Berry Bush", "Bush", "Mushroom", "Carrot", "Wheat", "Palm Tree", "Big Palm Tree", "Jungle Tree", "Big Jungle Tree", "Jungle Vine"}
     for i,v in pairs(chopList) do
         local chopButton = Instance.new("TextButton")
         chopButton.Name = v
