@@ -6,6 +6,10 @@ local HR = Character.HumanoidRootPart
 local function findTool(tool)
     local toolToEquip
     
+    if Character:FindFirstChildWhichIsA("Tool") and Character:FindFirstChildWhichIsA("Tool").toolModel:FindFirstChildWhichIsA("MeshPart") and Character:FindFirstChildWhichIsA("Tool").toolModel:FindFirstChildWhichIsA("MeshPart").Name:find(tool) then
+        return Character:FindFirstChildWhichIsA("Tool")
+    end
+    
     for i,v in pairs(Player.Backpack:GetChildren()) do
         if v:FindFirstChild("toolModel") and v.toolModel:FindFirstChildWhichIsA("MeshPart").Name:find(tool) then
             toolToEquip = v
