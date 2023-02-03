@@ -27,7 +27,7 @@ local function getTree(treeName)
         end
         
     elseif treeName == "foods" then
-        local listOfFoods = {"Berry Bush", "Bush", "Mushroom", "Carrot", "Wheat"}
+        local listOfFoods = {"Berry Bush", "Bush", "Mushroom", "Carrot", "Wheat", "Cabbages", "Peppers"}
         for i,v in pairs(choppables:GetDescendants()) do
             if v:IsA("Model") and v:FindFirstChildWhichIsA("MeshPart").Transparency == 0 then
                 for i2,v2 in pairs(listOfFoods) do
