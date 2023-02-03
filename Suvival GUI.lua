@@ -369,7 +369,7 @@ local function createFarmBackground()
     titleForPlants.TextSize = 14.000
     titleForPlants.TextWrapped = true
     
-    local farmingList = {"carrot", "wheat"}
+    local farmingList = {"carrot", "wheat", "berry", "cabbage", "pepper"}
     for i,v in pairs(farmingList) do
         local plantPlantButton = Instance.new("TextButton")
         plantPlantButton.Name = v
